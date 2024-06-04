@@ -1,7 +1,7 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 
 const todoSlice = createSlice({
-    name: "state",
+    name: "todos",
     initialState: {
         loading: false,
         todolist: [],

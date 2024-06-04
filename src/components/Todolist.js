@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./todolist.css";
 import { createTodo, deleteTodo, getTodos, updateTodo } from "../APIs/todoAPIs";
 import { useSelector, useDispatch } from "react-redux";
-import { addTodo, editTodo, removeTodo, setTodos } from "./TodolistRTK";
+import { addTodo, editTodo, removeTodo, setTodos } from "../slice/TodolistRTK";
 
 const Todolist = () => {
   const dispatch = useDispatch();
@@ -33,6 +33,8 @@ const Todolist = () => {
 //   }, []);
 
   const handleSubmit = async () => {
+    if (!input) return;
+
     const newItem = {
       content: input,
     };
@@ -72,11 +74,9 @@ const Todolist = () => {
       const currContent = todos.todolist.find((item) => item.id === id).content;
       setEditInput(currContent);
     } else {
+      if (!editInput) return;
       try {
         await updateTodo(id, { content: editInput });
-
-        setEditId(null);
-        setEditInput(""); // <-- this is async so editInput below still have value
         // setTodolist(
         //   todolist.map((item) => {
         //     if (item.id === id) {
@@ -90,6 +90,9 @@ const Todolist = () => {
 
         // Redux Slice to update Todo
         dispatch(editTodo({id: id, content: editInput}));
+
+        setEditId(null);
+        setEditInput("");
       } catch (err) {
         alert("failed to update todo!");
       }

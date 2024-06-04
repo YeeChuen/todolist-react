@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 
 // --- RTK try
 import { configureStore } from '@reduxjs/toolkit';
-import todosReducer from './components/TodolistRTK';
+import todosReducer from './slice/TodolistRTK';
 
 const store = configureStore({
   reducer: {
@@ -21,9 +21,9 @@ export default store;
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-  <Provider store={store}>
-    <App />
-  </Provider>
+    <Provider store={store}>
+      <App />
+    </Provider>
   </React.StrictMode>
 );
 
