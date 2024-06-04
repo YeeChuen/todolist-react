@@ -1,36 +1,20 @@
 import React, { useEffect, useState } from "react";
 import "./todolist.css";
 import { createTodo, deleteTodo, getTodos, updateTodo } from "../APIs/todoAPIs";
-import { useSelector, useDispatch } from "react-redux";
-import { addTodo, editTodo, removeTodo, setTodos } from "./TodolistRTK";
 
-const Todolist = () => {
-  const dispatch = useDispatch();
-  const todos = useSelector((state) => state.todos);
-//   console.log(todos.todolist);
-
-  // get Todos
-  useEffect(() => {
-    async function fetchData() {
-      const data = await getTodos();
-      // redux slice to fetch todos
-      dispatch(setTodos(data.reverse()));
-    }
-    fetchData();
-  }, []);
-
+const TodolistBackup = () => {
   const [input, setInput] = useState("");
-//   const [todolist, setTodolist] = useState([]);
+  const [todolist, setTodolist] = useState([]);
   const [editId, setEditId] = useState(null);
   const [editInput, setEditInput] = useState("");
 
-//   useEffect(() => {
-//     async function fetchData() {
-//       const data = await getTodos();
-//       setTodolist(data.reverse());
-//     }
-//     fetchData();
-//   }, []);
+  useEffect(() => {
+    async function fetchData() {
+      const data = await getTodos();
+      setTodolist(data.reverse());
+    }
+    fetchData();
+  }, []);
 
   const handleSubmit = async () => {
     const newItem = {
@@ -38,12 +22,8 @@ const Todolist = () => {
     };
     try {
       const todoWithId = await createTodo(newItem);
-    //   setTodolist([todoWithId, ...todolist]);
+      setTodolist([todoWithId, ...todolist]);
       setInput("");
-
-      // Redux Slice to add Todo
-      dispatch(addTodo(todoWithId));
-
     } catch (err) {
       alert("failed to create todo!");
     }
@@ -51,16 +31,13 @@ const Todolist = () => {
 
   const handleDelete = async (indexToDelete) => {
     try {
-      const id = todos.todolist[indexToDelete].id;
+      const id = todolist[indexToDelete].id;
       await deleteTodo(id);
-    //   setTodolist(
-    //     todolist.filter((item, index) => {
-    //       return index !== indexToDelete;
-    //     })
-    //   );
-
-      // Redux Slice to delete Todo
-      dispatch(removeTodo(indexToDelete));
+      setTodolist(
+        todolist.filter((item, index) => {
+          return index !== indexToDelete;
+        })
+      );
     } catch (err) {
       alert("failed to delete todo!");
     }
@@ -69,27 +46,24 @@ const Todolist = () => {
   const handleEdit = async (id) => {
     if (editId === null || editId !== id) {
       setEditId(id);
-      const currContent = todos.todolist.find((item) => item.id === id).content;
+      const currContent = todolist.find((item) => item.id === id).content;
       setEditInput(currContent);
     } else {
       try {
         await updateTodo(id, { content: editInput });
 
         setEditId(null);
-        setEditInput(""); // <-- this is async so editInput below still have value
-        // setTodolist(
-        //   todolist.map((item) => {
-        //     if (item.id === id) {
-        //       return { ...item, content: editInput };
-        //     } else {
-        //       //return { ...item };//non primitive
-        //       return item;
-        //     }
-        //   })
-        // );
-
-        // Redux Slice to update Todo
-        dispatch(editTodo({id: id, content: editInput}));
+        setEditInput("");
+        setTodolist(
+          todolist.map((item) => {
+            if (item.id === id) {
+              return { ...item, content: editInput };
+            } else {
+              //return { ...item };//non primitive
+              return item;
+            }
+          })
+        );
       } catch (err) {
         alert("failed to update todo!");
       }
@@ -97,17 +71,16 @@ const Todolist = () => {
   };
 
   const handleDeleteAll = async () => {
-    try {
-      for (let i = 0; i < todos.todolist.length; i++) {
-        const id = todos.todolist[i].id;
-        await deleteTodo(id);
-      }
-    //   setTodolist([]);
-      dispatch(setTodos([]));
+    try{
+        for (let i = 0; i < todolist.length; i++) {
+            const id = todolist[i].id;
+              await deleteTodo(id);
+        }
+        setTodolist([])
     } catch (err) {
-      alert("failed to delete todo!");
-    }
-  };
+        alert("failed to delete todo!");
+      }
+  }
 
   return (
     <div className="todo-container">
@@ -119,13 +92,13 @@ const Todolist = () => {
           }}
         />
         <button onClick={handleSubmit}>submit</button>
-
+        
         <button onClick={handleDeleteAll}>Delete all</button>
       </div>
 
       <div className="list-container">
         <ul>
-          {todos.todolist.map((item, index) => {
+          {todolist.map((item, index) => {
             const isEdit = item.id === editId;
             return (
               <li key={item.id}>
@@ -159,4 +132,4 @@ const Todolist = () => {
   );
 };
 
-export default Todolist;
+export default TodolistBackup;

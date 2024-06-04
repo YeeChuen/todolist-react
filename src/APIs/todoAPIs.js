@@ -23,7 +23,6 @@ export const updateTodo = (id, partialTodo) => {
 };
 
 export const deleteTodo = (id) => {
-    console.log("id", id);
     return fetch(`${baseURL}/${id}`, { method: "DELETE" }).then((res) =>
         res.json()
     );

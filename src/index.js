@@ -3,11 +3,27 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from "react-redux";
+
+// --- RTK try
+import { configureStore } from '@reduxjs/toolkit';
+import todosReducer from './components/TodolistRTK';
+
+const store = configureStore({
+  reducer: {
+    todos: todosReducer,
+  },
+});
+
+export default store;
+// ---
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+  <Provider store={store}>
     <App />
+  </Provider>
   </React.StrictMode>
 );
 
